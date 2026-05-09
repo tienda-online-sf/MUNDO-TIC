@@ -483,6 +483,74 @@
         }
         input:focus, textarea:focus { border-color: var(--accent); background: rgba(255,255,255,0.05); }
         body.no-scroll { overflow: hidden; height: 100vh; }
+
+        /* --- INTERFAZ ESTILO TIENDANUBE --- */
+        .tn-modal-content {
+            background: var(--bg);
+            width: 100%;
+            min-height: 100vh;
+            border-radius: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .tn-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: var(--card);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .tn-body {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            overflow-y: auto;
+        }
+        @media (max-width: 900px) {
+            .tn-body { grid-template-columns: 1fr; padding: 20px; }
+        }
+        .tn-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .tn-card h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tn-row {
+            display: flex;
+            gap: 15px;
+        }
+        .tn-row .form-group { flex: 1; }
+        .tn-media-box {
+            border: 2px dashed rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            background: rgba(255,255,255,0.02);
+            transition: var(--transition);
+        }
+        .tn-media-box:hover {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+        }
     </style>
 </head>
 <body class="dark">
@@ -594,6 +662,11 @@
         </div>
         
         <div id="t-prod">
+            
+            <button class="btn-add" style="background: var(--accent); margin-bottom: 20px;" onclick="openModal('tiendanubeModal')">
+                ✨ Abrir Editor Avanzado (Estilo Tiendanube)
+            </button>
+            
             <div class="admin-form-box">
                 <input id="fId" type="hidden">
                 <div class="form-group"><label>Nombre del Producto</label><input id="fNom"></div>
@@ -654,6 +727,118 @@
         <div class="form-group"><label>Información del Local</label><textarea id="rD" placeholder="Nombre del negocio, calle y altura..."></textarea></div>
         <button class="btn-add" style="background:var(--success); margin-top:10px; padding:20px;" onclick="registrarUsuarioEnGoogle()">ENVIAR PARA REVISIÓN</button>
         <button class="btn-add" style="background:none; color:white; margin-top:10px; opacity:0.6;" onclick="closeAll()">Volver atrás</button>
+    </div>
+</div>
+
+<div class="modal" id="tiendanubeModal" style="align-items: flex-start; padding: 0;">
+    <div class="tn-modal-content">
+        <div class="tn-header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button onclick="closeAll(); openModal('adminModal');" class="icon-btn" style="background: var(--input-bg);">←</button>
+                <h2 style="margin: 0;">Agregar nuevo producto</h2>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <button class="btn-add" style="background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 12px 24px; width: auto;" onclick="limpiarTN()">Descartar</button>
+                <button class="btn-add" style="background: var(--success); padding: 12px 30px; width: auto;" onclick="savePTiendanube()">Guardar cambios</button>
+            </div>
+        </div>
+
+        <div class="tn-body">
+            <div class="tn-main-col">
+                <input type="hidden" id="tn-Id">
+                
+                <div class="tn-card">
+                    <h3>📝 Información básica</h3>
+                    <div class="form-group">
+                        <label>Nombre *</label>
+                        <input id="tn-Nom" placeholder="Ej: Módulo Display Samsung A04 Original">
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción del producto</label>
+                        <textarea id="tn-Desc" rows="6" placeholder="Detallá las características principales, compatibilidad, garantía de CELMAX, etc."></textarea>
+                    </div>
+                </div>
+
+                <div class="tn-card">
+                    <h3>🖼️ Fotos y Medios</h3>
+                    <div class="tn-media-box">
+                        <span style="font-size: 30px; display: block; margin-bottom: 10px;">📸</span>
+                        <b>Enlaces de imágenes</b>
+                        <p style="font-size: 13px; opacity: 0.6; margin-top: 5px;">Pegá las URLs de las imágenes (una por línea)</p>
+                        <textarea id="tn-Imagenes" rows="4" placeholder="https://ejemplo.com/foto1.jpg&#10;https://ejemplo.com/foto2.jpg" style="margin-top: 15px;"></textarea>
+                    </div>
+                </div>
+
+                <div class="tn-card">
+                    <h3>💰 Precios</h3>
+                    <div class="tn-row">
+                        <div class="form-group">
+                            <label>Precio de venta ($)</label>
+                            <input id="tn-Pre" type="number" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Precio mayorista ($)</label>
+                            <input id="tn-PreMay" type="number" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Etiqueta promocional (Opcional)</label>
+                        <input id="tn-Pro" placeholder="Ej: 15% OFF / Envío Gratis">
+                    </div>
+                </div>
+            </div>
+
+            <div class="tn-sidebar-col">
+                <div class="tn-card">
+                    <h3>📦 Inventario</h3>
+                    <div class="form-group">
+                        <label>Stock disponible</label>
+                        <input id="tn-Stock" type="number" value="10" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>SKU / Código (Interno)</label>
+                        <input id="tn-Sku" placeholder="Ej: REP-SAM-A04">
+                    </div>
+                </div>
+
+                <div class="tn-card">
+                    <h3>🏷️ Organización</h3>
+                    <div class="form-group">
+                        <label>Categoría principal</label>
+                        <select id="tn-Cat" style="cursor: pointer; padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); background: var(--input-bg); color: white; width: 100%;">
+                            <option value="">Seleccionar categoría...</option>
+                            <option value="repuestos">Repuestos</option>
+                            <option value="fundas">Fundas</option>
+                            <option value="cargadores">Cargadores</option>
+                            <option value="bateria">Baterías</option>
+                            <option value="cables">Cables</option>
+                            <option value="cabezales">Cabezales</option>
+                            <option value="adaptadores">Adaptadores</option>
+                            <option value="powerbank">Power Bank</option>
+                            <option value="inalambrico">Inalámbrico</option>
+                            <option value="auricular_vincha">Auricular Vincha</option>
+                            <option value="auri_sin_cable">Auricular sin cable</option>
+                            <option value="auri_con_cable">Auricular con cable</option>
+                            <option value="smartwatch">Smartwatch</option>
+                            <option value="smartband">Smartband</option>
+                            <option value="aro_luz">Aro de Luz</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="tn-card">
+                    <h3>📋 Ficha Técnica</h3>
+                    <div class="form-group">
+                        <label>Características breves</label>
+                        <textarea id="tn-Caract" rows="3" placeholder="Ej: Color negro, incluye marco..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Detalles técnicos</label>
+                        <textarea id="tn-Ficha" rows="3" placeholder="Voltaje, amperaje, modelo exacto..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -1360,6 +1545,60 @@
             if (modal && modal.style.display === "flex") closeProductDetail();
         }
     });
+
+    // --- Funciones para la interfaz Tiendanube ---
+    async function savePTiendanube() {
+        const nom = document.getElementById("tn-Nom").value.trim();
+        if (!nom) return alert("El nombre del producto es obligatorio");
+        
+        const id = document.getElementById("tn-Id").value;
+        const imagenesRaw = document.getElementById("tn-Imagenes").value.trim();
+        const imagenes = imagenesRaw ? imagenesRaw.split('\n').map(u => u.trim()).filter(u => u) : [];
+        
+        const data = {
+            nombre: nom,
+            precio: parseFloat(document.getElementById("tn-Pre").value) || 0,
+            precio_may: parseFloat(document.getElementById("tn-PreMay").value) || 0,
+            stock: parseInt(document.getElementById("tn-Stock").value) || 0,
+            promo: document.getElementById("tn-Pro").value.trim(),
+            categoria: document.getElementById("tn-Cat").value.trim().toLowerCase(),
+            imagenes: imagenes,
+            descripcion: document.getElementById("tn-Desc").value.trim(),
+            caracteristicas: document.getElementById("tn-Caract").value.trim(),
+            ficha: document.getElementById("tn-Ficha").value.trim(),
+            sku: document.getElementById("tn-Sku").value.trim()
+        };
+
+        try {
+            if (id) {
+                await db.collection("productos").doc(id).update(data);
+            } else {
+                await db.collection("productos").add(data);
+            }
+            limpiarTN();
+            closeAll();
+            openModal('adminModal');
+            alert("✅ Producto guardado correctamente desde la interfaz avanzada");
+        } catch (e) {
+            console.error("Error Firebase:", e);
+            alert("❌ Error al guardar el producto\n\n" + (e.message || e));
+        }
+    }
+
+    function limpiarTN() {
+        document.getElementById("tn-Id").value = "";
+        document.getElementById("tn-Nom").value = "";
+        document.getElementById("tn-Pre").value = "";
+        document.getElementById("tn-PreMay").value = "";
+        document.getElementById("tn-Stock").value = "10";
+        document.getElementById("tn-Pro").value = "";
+        document.getElementById("tn-Cat").value = "";
+        document.getElementById("tn-Imagenes").value = "";
+        document.getElementById("tn-Desc").value = "";
+        document.getElementById("tn-Caract").value = "";
+        document.getElementById("tn-Ficha").value = "";
+        document.getElementById("tn-Sku").value = "";
+    }
 
     window.onload = init;
 </script>
